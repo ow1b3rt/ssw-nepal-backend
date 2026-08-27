@@ -2,6 +2,9 @@
   "name": "ssw-nepal",
   "version": "1.0.0",
   "description": "",
+  "imports": {
+    "#/*": "./*"
+  },
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
