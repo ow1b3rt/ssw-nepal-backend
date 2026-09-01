@@ -1,6 +1,6 @@
 import { db } from "../../config/db.js"
 import { eq } from "drizzle-orm"
-import { paginateAndSearch } from "../utils/queryhelper.js"
+import { fromTable, paginateAndSearch } from "../utils/queryhelper.js"
 
 export async function commonCreate(table, data) {
   const [result] = await db.insert(table).values(data).returning()
@@ -8,9 +8,17 @@ export async function commonCreate(table, data) {
   return result
 }
 
-export async function commonFindById(table, id) {
-  const [result] = await db.select().from(table).where(eq(table.id, id))
-  return result
+// Fetches a single row by id — pass a Table, or a join() result directly
+export async function commonFindById(source, id) {
+  const baseTable = source && source.dataQuery ? source.baseTable : source;
+  const { dataQuery } = source && source.dataQuery ? source : fromTable(source);
+  let [result] = await dataQuery.where(eq(baseTable.id, id));
+
+  if (result.password) {
+    let { password, ...rest } = result
+    result = rest
+  }
+  return result;
 }
 
 export async function commonFindAll(table, query = {}) {

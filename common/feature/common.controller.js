@@ -1,12 +1,23 @@
 import {
-  commonGetService, commonCreateService, commonUpdateService, commonDeleteService, commonGetSingleService
+  commonGetService,
+  commonCreateService,
+  commonUpdateService,
+  commonDeleteService,
+  commonGetSingleService,
 } from "./common.services.js";
 import { StatusCodes } from "http-status-codes";
 import { getTableName } from "drizzle-orm";
-import { parseBody } from '#/common/utils/parse.js';
-import { buildWhereFromQuery } from '#/common/utils/queryhelper.js';
+import { parseBody } from "#/common/utils/parse.js";
+import { buildWhereFromQuery } from "#/common/utils/queryhelper.js";
 
-export async function commonGetController(req, res, table, searchFields = [], orderBy = undefined, filters = []) {
+export async function commonGetController(
+  req,
+  res,
+  table,
+  searchFields = [],
+  orderBy = undefined,
+  filters = [],
+) {
   const query = {
     search: req.query.search,
     page: req.query.page,
@@ -14,8 +25,8 @@ export async function commonGetController(req, res, table, searchFields = [], or
     searchFields: searchFields,
     orderBy: orderBy,
     where: buildWhereFromQuery(table, req.query, filters),
-  }
-  const data = await commonGetService(table, query)
+  };
+  const data = await commonGetService(table, query);
 
   res.status(StatusCodes.OK).json({
     success: true,
@@ -25,8 +36,9 @@ export async function commonGetController(req, res, table, searchFields = [], or
 }
 
 export async function commonCreateController(req, res, table, schema) {
-  const data = parseBody(schema, req.body)
-  const result = await commonCreateService(table, data)
+  const data = parseBody(schema, req.body);
+  const result = await commonCreateService(table, data);
+
   res.status(StatusCodes.OK).json({
     success: true,
     [`${getTableName(table)}`]: result,
@@ -34,8 +46,8 @@ export async function commonCreateController(req, res, table, schema) {
 }
 
 export async function commonUpdateController(req, res, table, schema) {
-  const data = parseBody(schema, req.body)
-  const result = await commonUpdateService(table, req.params.id, data)
+  const data = parseBody(schema, req.body);
+  const result = await commonUpdateService(table, req.params.id, data);
   res.status(StatusCodes.OK).json({
     success: true,
     [`${getTableName(table)}`]: result,
@@ -43,7 +55,7 @@ export async function commonUpdateController(req, res, table, schema) {
 }
 
 export async function commonDeleteController(req, res, table) {
-  const data = await commonDeleteService(table, req.params.id)
+  const data = await commonDeleteService(table, req.params.id);
   res.status(StatusCodes.OK).json({
     success: true,
     [`${getTableName(table)}`]: data,
@@ -51,9 +63,10 @@ export async function commonDeleteController(req, res, table) {
 }
 
 export async function commonGetSingleController(req, res, table) {
-  const data = await commonGetSingleService(table, req.params.id)
+  const data = await commonGetSingleService(table, req.params.id);
   res.status(StatusCodes.OK).json({
     success: true,
-    [`${getTableName(table)}`]: data,
+    resource: getTableName(table),
+    item: data,
   });
 }

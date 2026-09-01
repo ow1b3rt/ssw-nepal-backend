@@ -10,7 +10,7 @@ const JOIN_METHODS = {
 };
 
 // Builds a base data/count query pair from a single table
-function fromTable(table) {
+export function fromTable(table) {
   return {
     dataQuery: db.select().from(table),
     countQuery: db.select({ count: sql`count(*)::int` }).from(table),
@@ -38,7 +38,7 @@ export function join(baseTable, joinTable, { on, fields, type = "inner", name } 
     .from(baseTable)
     [method](joinTable, on);
 
-  return { dataQuery, countQuery, columns, name };
+  return { dataQuery, countQuery, columns, name, baseTable };
 }
 
 export async function paginateAndSearch(
