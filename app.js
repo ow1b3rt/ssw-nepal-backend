@@ -12,11 +12,15 @@ import notFound from "./common/errors/notFound.js";
 import { env } from "./config/env.js";
 import routes from "./features/index.js";
 
+import yaml from "yamljs";
+import swaggerUi from "swagger-ui-express";
+
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const swaggerDocument = yaml.load(path.join(__dirname, "swagger.yaml"));
 app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 
 const allowedOrigins = [env.CLIENT_URL, env.DOMAIN_NAME].filter(Boolean);
@@ -53,6 +57,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api", routes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(notFound);
 app.use(errorHandler);
