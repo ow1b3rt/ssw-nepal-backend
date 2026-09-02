@@ -21,7 +21,7 @@ export async function commonGetController(
   const query = {
     search: req.query.search,
     page: req.query.page,
-    pageSize: req.query.pageSize,
+    pageSize: req.query.limit,
     searchFields: searchFields,
     orderBy: orderBy,
     where: buildWhereFromQuery(table, req.query, filters),
@@ -63,6 +63,7 @@ export async function commonDeleteController(req, res, table) {
 }
 
 export async function commonGetSingleController(req, res, table) {
+  console.log("table", table);
   const data = await commonGetSingleService(table, req.params.id);
   res.status(StatusCodes.OK).json({
     success: true,

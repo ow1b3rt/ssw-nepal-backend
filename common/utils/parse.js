@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 
 export function parseBody(schema, body) {
   const result = schema.safeParse(body);
-  console.log(result)
 
   if (!result.success) {
     const message = result.error.issues[0]?.message || "Invalid request data";

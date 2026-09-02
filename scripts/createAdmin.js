@@ -3,7 +3,7 @@ dotenv.config()
 
 import bcrypt from 'bcrypt'
 import { db } from "../config/db.js";
-import { users } from "../db/schema/users.js"
+import { users, authors } from "../db/schema/index.js"
 
 const args = process.argv.slice(2)
 
@@ -22,15 +22,23 @@ const createAdmin = async () => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        await db.insert(users).values({
+        const [user] = await db.insert(users).values({
           name: 'admin',
           email: email,
           password: hashedPassword,
           role: 'admin',
           isVerified: true,
-        })
+        }).returning()
 
         console.log('Admin created successfully')
+        console.log('Creating author ...')
+
+        const [author] = await db.insert(authors).values({
+          userId: user.id,
+          bio: 'Admin user',
+        }).returning()
+
+        console.log('Author created successfully')
 
         process.exit(0)
     } catch (error) {

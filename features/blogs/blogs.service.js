@@ -3,251 +3,252 @@ import { StatusCodes } from "http-status-codes";
 import HttpError from "../../common/errors/HttpError.js";
 
 import {
-    blogSlugExists,
-    deleteBlogById,
-    findAllBlogs,
-    findBlogById,
-    findBlogBySlug,
-    findDraftBlogsByAuthor,
-    findPublishedAndDraftsByAuthor,
-    findPublishedBlogBySlug,
-    findPublishedBlogs,
-    insertBlog,
-    updateBlogById,
-    findAuthorByUserId,
+  blogSlugExists,
+  deleteBlogById,
+  findAllBlogs,
+  findBlogById,
+  findBlogBySlug,
+  findDraftBlogsByAuthor,
+  findPublishedAndDraftsByAuthor,
+  findPublishedBlogBySlug,
+  findPublishedBlogs,
+  insertBlog,
+  updateBlogById,
+  findAuthorByUserId,
 } from "./blogs.repository.js";
 
 import {
-    canCreateBlog,
-    canDeleteBlog,
-    canManageAnyBlog,
-    canUpdateBlog,
-    canViewBlog,
+  canCreateBlog,
+  canDeleteBlog,
+  canManageAnyBlog,
+  canUpdateBlog,
+  canViewBlog,
 } from "./blogs.policy.js";
 
 import { createSlug } from "./blogs.utils.js";
 import { authors } from "../../db/schema/authors.js";
 
 async function requireAuthorProfile(userId) {
-    const author = await findAuthorByUserId(userId);
+  const author = await findAuthorByUserId(userId);
 
-    if (!author) {
-        throw new HttpError("Author profile not found", StatusCodes.FORBIDDEN);
-    }
+  if (!author) {
+    throw new HttpError("Author profile not found", StatusCodes.FORBIDDEN);
+  }
 
-    return author;
+  return author;
 }
 
 async function generateUniqueSlug(title) {
-    const baseSlug = createSlug(title);
+  const baseSlug = createSlug(title);
 
-    if (!(await blogSlugExists(baseSlug))) {
-        return baseSlug;
+  if (!(await blogSlugExists(baseSlug))) {
+    return baseSlug;
+  }
+
+  let suffix = 2;
+
+  while (suffix <= 20) {
+    const candidate = `${baseSlug}-${suffix}`;
+
+    const exists = await blogSlugExists(candidate);
+
+    if (!exists) {
+      return candidate;
     }
 
-    let suffix = 2;
+    suffix++;
+  }
 
-    while (suffix <= 20) {
-        const candidate = `${baseSlug}-${suffix}`;
-
-        const exists = await blogSlugExists(candidate);
-
-        if (!exists) {
-            return candidate;
-        }
-
-        suffix++;
-    }
-
-    return `${baseSlug}-${Date.now()}`;
+  return `${baseSlug}-${Date.now()}`;
 }
 
 function buildPagination(page, limit, total) {
-    const totalPages = Math.ceil(total / limit);
+  const totalPages = Math.ceil(total / limit);
 
-    return {
-        page,
-        limit,
-        total,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-    };
+  return {
+    page,
+    limit,
+    total,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPreviousPage: page > 1,
+  };
 }
 
 function formatListResult(result, query) {
-    return {
-        items: result.items,
+  return {
+    items: result.items,
 
-        pagination: buildPagination(query.page, query.limit, result.total),
-    };
+    pagination: buildPagination(query.page, query.limit, result.total),
+  };
 }
 
 export async function createBlogService(user, data) {
-    if (!canCreateBlog(user)) {
-        throw new HttpError(
-            "You are not allowed to create blogs",
-            StatusCodes.FORBIDDEN,
-        );
-    }
+  if (!canCreateBlog(user)) {
+    throw new HttpError(
+      "You are not allowed to create blogs",
+      StatusCodes.FORBIDDEN,
+    );
+  }
 
-    const author = await requireAuthorProfile(user.id);
+  const author = await requireAuthorProfile(user.id);
 
-    const slug = await generateUniqueSlug(data.title);
+  const slug = await generateUniqueSlug(data.title);
 
-    const blog = await insertBlog({
-        ...data,
+  const blog = await insertBlog({
+    ...data,
 
-        slug,
+    slug,
 
-        authorId: author.id,
+    authorId: author.id,
 
-        publishedAt: data.status === "published" ? new Date() : null,
-    });
+    publishedAt: data.status === "published" ? new Date() : null,
+  });
 
-    return blog;
+  return blog;
 }
 
 export async function getBlogsService(user, query) {
-    const options = {
-        search: query.search,
+  const options = {
+    search: query.search,
 
-        page: query.page,
+    page: query.page,
 
-        limit: query.limit,
+    limit: query.limit,
 
-        sortBy: query.sortBy,
+    sortBy: query.sortBy,
 
-        order: query.order,
-    };
+    order: query.order,
+  };
+  console.log("options", options);
 
-    if (!user) {
-        const result = await findPublishedBlogs(options);
-
-        return formatListResult(result, query);
-    }
-
-    if (canManageAnyBlog(user)) {
-        const result = await findAllBlogs({
-            ...options,
-
-            status: query.status,
-        });
-
-        return formatListResult(result, query);
-    }
-
-    if (user.role === "author") {
-        const author = await requireAuthorProfile(user.id);
-
-        if (query.status === "draft") {
-            const result = await findDraftBlogsByAuthor(author.id, options);
-
-            return formatListResult(result, query);
-        }
-
-        if (query.status === "published") {
-            const result = await findPublishedBlogs(options);
-
-            return formatListResult(result, query);
-        }
-
-        const result = await findPublishedAndDraftsByAuthor(author.id, options);
-
-        return formatListResult(result, query);
-    }
-
+  if (!user) {
     const result = await findPublishedBlogs(options);
 
     return formatListResult(result, query);
+  }
+
+  if (canManageAnyBlog(user)) {
+    const result = await findAllBlogs({
+      ...options,
+
+      status: query.status,
+    });
+
+    return formatListResult(result, query);
+  }
+
+  if (user.role === "author") {
+    const author = await requireAuthorProfile(user.id);
+
+    if (query.status === "draft") {
+      const result = await findDraftBlogsByAuthor(author.id, options);
+
+      return formatListResult(result, query);
+    }
+
+    if (query.status === "published") {
+      const result = await findPublishedBlogs(options);
+
+      return formatListResult(result, query);
+    }
+
+    const result = await findPublishedAndDraftsByAuthor(author.id, options);
+
+    return formatListResult(result, query);
+  }
+
+  const result = await findPublishedBlogs(options);
+
+  return formatListResult(result, query);
 }
 
 export async function getBlogBySlugService(user, slug) {
-    if (!user) {
-        const blog = await findPublishedBlogBySlug(slug);
-
-        if (!blog) {
-            throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
-        }
-
-        return blog;
-    }
-
-    const blog = await findBlogBySlug(slug);
+  if (!user) {
+    const blog = await findPublishedBlogBySlug(slug);
 
     if (!blog) {
-        throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
-    }
-
-    const author = await findAuthorByUserId(user.id);
-
-    if (!canViewBlog(user, blog, author.id)) {
-        throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
+      throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
     }
 
     return blog;
+  }
+
+  const blog = await findBlogBySlug(slug);
+
+  if (!blog) {
+    throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
+  }
+
+  const author = await findAuthorByUserId(user.id);
+
+  if (!canViewBlog(user, blog, author.id)) {
+    throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
+  }
+
+  return blog;
 }
 
 export async function updateBlogService(user, id, data) {
-    const existingBlog = await findBlogById(id);
+  const existingBlog = await findBlogById(id);
 
-    if (!existingBlog) {
-        throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
-    }
+  if (!existingBlog) {
+    throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
+  }
 
-    var author;
+  var author;
 
-    if (user.role === "author") {
-        author = await requireAuthorProfile(user.id);
-    }
+  if (user.role === "author") {
+    author = await requireAuthorProfile(user.id);
+  }
 
-    if (!canUpdateBlog(user, existingBlog, author.id)) {
-        throw new HttpError(
-            "You are not allowed to update this blog",
-            StatusCodes.FORBIDDEN,
-        );
-    }
+  if (!canUpdateBlog(user, existingBlog, author.id)) {
+    throw new HttpError(
+      "You are not allowed to update this blog",
+      StatusCodes.FORBIDDEN,
+    );
+  }
 
-    const updateData = {
-        ...data,
-    };
+  const updateData = {
+    ...data,
+  };
 
-    if (data.title && data.title !== existingBlog.title) {
-        updateData.slug = await generateUniqueSlug(data.title);
-    }
+  if (data.title && data.title !== existingBlog.title) {
+    updateData.slug = await generateUniqueSlug(data.title);
+  }
 
-    if (data.status === "published" && existingBlog.status !== "published") {
-        updateData.publishedAt = new Date();
-    }
+  if (data.status === "published" && existingBlog.status !== "published") {
+    updateData.publishedAt = new Date();
+  }
 
-    if (data.status === "draft" && existingBlog.status === "published") {
-        updateData.publishedAt = null;
-    }
+  if (data.status === "draft" && existingBlog.status === "published") {
+    updateData.publishedAt = null;
+  }
 
-    const blog = await updateBlogById(id, updateData);
+  const blog = await updateBlogById(id, updateData);
 
-    return blog;
+  return blog;
 }
 
 export async function deleteBlogService(user, id) {
-    const blog = await findBlogById(id);
+  const blog = await findBlogById(id);
 
-    if (!blog) {
-        throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
-    }
+  if (!blog) {
+    throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
+  }
 
-    var author;
+  var author;
 
-    if (user.role === "author") {
-        author = await requireAuthorProfile(user.id);
-    }
+  if (user.role === "author") {
+    author = await requireAuthorProfile(user.id);
+  }
 
-    if (!canDeleteBlog(user, blog, author.id)) {
-        throw new HttpError(
-            "You are not allowed to delete this blog",
-            StatusCodes.FORBIDDEN,
-        );
-    }
+  if (!canDeleteBlog(user, blog, author.id)) {
+    throw new HttpError(
+      "You are not allowed to delete this blog",
+      StatusCodes.FORBIDDEN,
+    );
+  }
 
-    await deleteBlogById(id);
+  await deleteBlogById(id);
 }
