@@ -34,11 +34,13 @@ export async function getBlogs(req, res) {
   const query = parseBody(getBlogsQuerySchema, req.query);
 
   const result = await getBlogsService(req.user, query);
+  console.log("result", result);
 
   res.status(StatusCodes.OK).json({
     success: true,
-    data: result.items,
-    pagination: result.pagination,
+    items: result.items,
+    resource: "blog",
+    ...result.pagination,
   });
 }
 
@@ -49,7 +51,8 @@ export async function getBlogBySlug(req, res) {
 
   res.status(StatusCodes.OK).json({
     success: true,
-    data: blog,
+    item: blog,
+    resource: "single blog",
   });
 }
 

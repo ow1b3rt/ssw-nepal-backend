@@ -1,19 +1,7 @@
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  ilike,
-  or,
-} from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
 
 import { db } from "../../config/db.js";
-import {
-  authors,
-  blogs,
-  users,
-} from "../../db/schema/index.js";
+import { authors, blogs, media, users } from "../../db/schema/index.js";
 
 const blogListSelection = {
   id: blogs.id,
@@ -31,6 +19,14 @@ const blogListSelection = {
     id: authors.id,
     userId: authors.userId,
     name: users.name,
+  },
+  media: {
+    id: media.id,
+    url: media.url,
+    alt: media.alt,
+    title: media.title,
+    type: media.type,
+    caption: media.caption,
   },
 };
 
@@ -57,6 +53,12 @@ const blogDetailSelection = {
   authorId: authors.id,
   authorUserId: authors.userId,
   authorName: users.name,
+
+  mediaId: media.id,
+  mediaUrl: media.url,
+  mediaTitle: media.title,
+  mediaAlt: media.alt,
+  mediaCaption: media.caption,
 };
 
 export async function findAuthorByUserId(userId) {
@@ -81,7 +83,7 @@ function getSearchCondition(search) {
     ilike(blogs.content, value),
     ilike(blogs.metaTitle, value),
     ilike(blogs.metaDescription, value),
-    ilike(users.name, value)
+    ilike(users.name, value),
   );
 }
 
@@ -93,17 +95,13 @@ function getOrderCondition(sortBy, order) {
     title: blogs.title,
   };
 
-  const column =
-    sortableColumns[sortBy] ?? blogs.createdAt;
+  const column = sortableColumns[sortBy] ?? blogs.createdAt;
 
-  return order === "asc"
-    ? asc(column)
-    : desc(column);
+  return order === "asc" ? asc(column) : desc(column);
 }
 
 function combineConditions(...conditions) {
-  const validConditions =
-    conditions.filter(Boolean);
+  const validConditions = conditions.filter(Boolean);
 
   if (validConditions.length === 0) {
     return undefined;
@@ -126,65 +124,42 @@ async function queryBlogs({
 }) {
   const offset = (page - 1) * limit;
 
-  const whereCondition =
-    combineConditions(
-      scopeCondition,
-      getSearchCondition(search)
-    );
+  const whereCondition = combineConditions(
+    scopeCondition,
+    getSearchCondition(search),
+  );
 
-  const [items, totalResult] =
-    await Promise.all([
-      db
-        .select(blogListSelection)
-        .from(blogs)
-        .innerJoin(
-          authors,
-          eq(blogs.authorId, authors.id)
-        )
-        .innerJoin(
-          users,
-          eq(authors.userId, users.id)
-        )
-        .where(whereCondition)
-        .orderBy(
-          getOrderCondition(
-            sortBy,
-            order
-          )
-        )
-        .limit(limit)
-        .offset(offset),
+  const [items, totalResult] = await Promise.all([
+    db
+      .select(blogListSelection)
+      .from(blogs)
+      .innerJoin(authors, eq(blogs.authorId, authors.id))
+      .innerJoin(users, eq(authors.userId, users.id))
+      .leftJoin(media, eq(media.id, blogs.thumbnail))
+      .where(whereCondition)
+      .orderBy(getOrderCondition(sortBy, order))
+      .limit(limit)
+      .offset(offset),
 
-      db
-        .select({
-          total: count(),
-        })
-        .from(blogs)
-        .innerJoin(
-          authors,
-          eq(blogs.authorId, authors.id)
-        )
-        .innerJoin(
-          users,
-          eq(authors.userId, users.id)
-        )
-        .where(whereCondition),
-    ]);
+    db
+      .select({
+        total: count(),
+      })
+      .from(blogs)
+      .innerJoin(authors, eq(blogs.authorId, authors.id))
+      .innerJoin(users, eq(authors.userId, users.id))
+      .leftJoin(media, eq(media.id, blogs.thumbnail))
+      .where(whereCondition),
+  ]);
 
   return {
     items,
-    total: Number(
-      totalResult[0]?.total ?? 0
-    ),
+    total: Number(totalResult[0]?.total ?? 0),
   };
 }
 
 export async function insertBlog(data) {
-
-  const [blog] = await db
-    .insert(blogs)
-    .values(data)
-    .returning();
+  const [blog] = await db.insert(blogs).values(data).returning();
 
   return blog;
 }
@@ -193,14 +168,8 @@ export async function findBlogById(id) {
   const [blog] = await db
     .select(blogDetailSelection)
     .from(blogs)
-    .innerJoin(
-      authors,
-      eq(blogs.authorId, authors.id)
-    )
-    .innerJoin(
-      users,
-      eq(authors.userId, users.id)
-    )
+    .innerJoin(authors, eq(blogs.authorId, authors.id))
+    .innerJoin(users, eq(authors.userId, users.id))
     .where(eq(blogs.id, id))
     .limit(1);
 
@@ -211,111 +180,62 @@ export async function findBlogBySlug(slug) {
   const [blog] = await db
     .select(blogDetailSelection)
     .from(blogs)
-    .innerJoin(
-      authors,
-      eq(blogs.authorId, authors.id)
-    )
-    .innerJoin(
-      users,
-      eq(authors.userId, users.id)
-    )
+    .innerJoin(authors, eq(blogs.authorId, authors.id))
+    .innerJoin(users, eq(authors.userId, users.id))
     .where(eq(blogs.slug, slug))
     .limit(1);
 
   return blog ?? null;
 }
 
-export async function findPublishedBlogBySlug(
-  slug
-) {
+export async function findPublishedBlogBySlug(slug) {
   const [blog] = await db
     .select(blogDetailSelection)
     .from(blogs)
-    .innerJoin(
-      authors,
-      eq(blogs.authorId, authors.id)
-    )
-    .innerJoin(
-      users,
-      eq(authors.userId, users.id)
-    )
-    .where(
-      and(
-        eq(blogs.slug, slug),
-        eq(blogs.status, "published")
-      )
-    )
+    .innerJoin(authors, eq(blogs.authorId, authors.id))
+    .innerJoin(users, eq(authors.userId, users.id))
+    .leftJoin(media, eq(media.id, blogs.thumbnail))
+    .where(and(eq(blogs.slug, slug), eq(blogs.status, "published")))
     .limit(1);
 
   return blog ?? null;
 }
 
-export async function findPublishedBlogs(
-  options
-) {
+export async function findPublishedBlogs(options) {
   return queryBlogs({
     ...options,
-    scopeCondition: eq(
-      blogs.status,
-      "published"
-    ),
+    scopeCondition: eq(blogs.status, "published"),
   });
 }
 
-export async function findAllBlogs({
-  status,
-  ...options
-}) {
+export async function findAllBlogs({ status, ...options }) {
   return queryBlogs({
     ...options,
-    scopeCondition: status
-      ? eq(blogs.status, status)
-      : undefined,
+    scopeCondition: status ? eq(blogs.status, status) : undefined,
   });
 }
 
-export async function findDraftBlogsByAuthor(
-  authorId,
-  options
-) {
+export async function findDraftBlogsByAuthor(authorId, options) {
   return queryBlogs({
     ...options,
     scopeCondition: and(
       eq(blogs.status, "draft"),
-      eq(blogs.authorId, authorId)
+      eq(blogs.authorId, authorId),
     ),
   });
 }
 
-export async function findPublishedAndDraftsByAuthor(
-  authorId,
-  options
-) {
+export async function findPublishedAndDraftsByAuthor(authorId, options) {
   return queryBlogs({
     ...options,
     scopeCondition: or(
-      eq(
-        blogs.status,
-        "published"
-      ),
-      and(
-        eq(
-          blogs.status,
-          "draft"
-        ),
-        eq(
-          blogs.authorId,
-          authorId
-        )
-      )
+      eq(blogs.status, "published"),
+      and(eq(blogs.status, "draft"), eq(blogs.authorId, authorId)),
     ),
   });
 }
 
-export async function updateBlogById(
-  id,
-  data
-) {
+export async function updateBlogById(id, data) {
   const [blog] = await db
     .update(blogs)
     .set({
@@ -329,12 +249,9 @@ export async function updateBlogById(
 }
 
 export async function deleteBlogById(id) {
-  const [blog] = await db
-    .delete(blogs)
-    .where(eq(blogs.id, id))
-    .returning({
-      id: blogs.id,
-    });
+  const [blog] = await db.delete(blogs).where(eq(blogs.id, id)).returning({
+    id: blogs.id,
+  });
 
   return blog ?? null;
 }

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { notices } from "#/db/schema/notices.js";
 import { createNoticeSchema } from "./notice.schema.js";
 import { join } from "#/common/utils/queryhelper.js";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { media } from "#/db/schema/media.js";
 import { getTableColumns } from "drizzle-orm";
 import {
@@ -41,6 +41,8 @@ router
         },
         type: "left",
       }),
+      [],
+      desc(notices.createdAt),
     ),
   )
   .post(authenticateUser, authorizePermissions("admin"), (req, res) =>
