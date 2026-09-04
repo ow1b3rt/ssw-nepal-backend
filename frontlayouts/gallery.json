@@ -1,0 +1,102 @@
+{
+  "items": [
+    {
+      "image": {
+        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
+        "alt": ""
+      },
+      "label": "hgg"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1011/800/600",
+        "alt": "Office reception"
+      },
+      "label": "Reception"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1024/800/600",
+        "alt": "Group gathering"
+      },
+      "label": "Gathering"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1015/800/600",
+        "alt": "Team gift ceremony"
+      },
+      "label": null
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1035/800/600",
+        "alt": "Team member portrait"
+      },
+      "label": "Team Member"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1041/800/600",
+        "alt": "Staff group photo"
+      },
+      "label": null
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1050/800/600",
+        "alt": "Classroom session"
+      },
+      "label": "Training"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1062/800/600",
+        "alt": "Office desk setup"
+      },
+      "label": null
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1074/800/600",
+        "alt": "Language class in progress"
+      },
+      "label": "JFT Class"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1084/800/600",
+        "alt": "Trainees studying"
+      },
+      "label": null
+    },
+    {
+      "image": {
+        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
+        "alt": "dog"
+      },
+      "label": "meow cash"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/109/800/600",
+        "alt": "Certificate ceremony"
+      },
+      "label": "Graduation"
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/110/800/600",
+        "alt": "Interview preparation"
+      },
+      "label": null
+    },
+    {
+      "image": {
+        "src": "https://picsum.photos/id/1074/800/600",
+        "alt": "Staff meeting"
+      },
+      "label": "Team Meeting"
+    }
+  ]
+}

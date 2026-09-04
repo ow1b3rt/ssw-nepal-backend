@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "image": {
+        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
+        "alt": "lamine"
+      },
+      "title": "train ",
+      "description": "  const handleChange = (path) => (e) => {\n    update(setPath(section, path, e.target.value));\n  };",
+      "slug": "train-"
+    },
+    {
+      "image": {
+        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
+        "alt": "lamine"
+      },
+      "title": "slug slug slug",
+      "description": "\n        At SSW Training Centre Nepal, we understand that choosing the right career path can be a daunting task. That's why we offer comprehensive career counselling services to guide you every step of the way. Our experienced counselors take the time to get to know you, understand your aspirations, strengths, and the opportunities available to you. Whether you are just starting out, looking to advance in your current career, or considering a change, we provide personalized guidance to help you make informed decisions and achieve your professional goals in Japan. Our goal is to empower you to take charge of your future with confidence.,\n\n    At SSW Training Centre Nepal, we understand that choosing the right career path can be a daunting task. That's why we offer comprehensive career counselling services to guide you every step of the way. Our experienced counselors take the time to get to know you, understand your aspirations, strengths, and the opportunities available to you. Whether you are just starting out, looking to advance in your current career, or considering a change, we provide personalized guidance to help you make informed decisions and achieve your professional goals in Japan. Our goal is to empower you to take charge of your future with confidence.,\n   ",
+      "slug": "slug-slug-slug"
+    }
+  ]
+}
