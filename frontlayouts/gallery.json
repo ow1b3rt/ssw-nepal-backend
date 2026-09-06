@@ -2,101 +2,94 @@
   "items": [
     {
       "image": {
-        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
-        "alt": ""
-      },
-      "label": "hgg"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/1011/800/600",
+        "src": "/images/home/reception.jpg",
         "alt": "Office reception"
       },
       "label": "Reception"
     },
     {
       "image": {
-        "src": "https://picsum.photos/id/1024/800/600",
+        "src": "/images/home/gathering.jpg",
         "alt": "Group gathering"
       },
       "label": "Gathering"
     },
     {
       "image": {
-        "src": "https://picsum.photos/id/1015/800/600",
+        "src": "/images/success.png",
         "alt": "Team gift ceremony"
       },
-      "label": "cliff"
+      "label": "Success"
     },
     {
       "image": {
-        "src": "https://picsum.photos/id/1035/800/600",
-        "alt": "Team member portrait"
+        "src": "/images/home/building.jpg",
+        "alt": "Building"
+      },
+      "label": "Building"
+    },
+    {
+      "image": {
+        "src": "/images/home/about-office.jpg",
+        "alt": "Staff group photo"
+      },
+      "label": "Office"
+    },
+    {
+      "image": {
+        "src": "/images/home/wholeteam.jpg",
+        "alt": "Classroom session"
+      },
+      "label": "Crew"
+    },
+    {
+      "image": {
+        "src": "/images/home/teaching.jpg",
+        "alt": "Office desk setup"
+      },
+      "label": "Teaching"
+    },
+    {
+      "image": {
+        "src": "/images/home/homeclass.jpg",
+        "alt": "Language class in progress"
+      },
+      "label": "Demo Class"
+    },
+    {
+      "image": {
+        "src": "/images/home/class-room.jpg",
+        "alt": "Trainees studying"
+      },
+      "label": "Classroom"
+    },
+    {
+      "image": {
+        "src": "/images/home/homeaward.jpg",
+        "alt": "token"
+      },
+      "label": "Token"
+    },
+    {
+      "image": {
+        "src": "/images/home/team.jpg",
+        "alt": ""
       },
       "label": "Team Member"
     },
     {
       "image": {
-        "src": "https://picsum.photos/id/1041/800/600",
-        "alt": "Staff group photo"
+        "src": "/images/home/festival.jpg",
+        "alt": "Festival Ceremony"
       },
-      "label": "ocean"
+      "label": "Festival"
     },
     {
       "image": {
-        "src": "https://picsum.photos/id/1050/800/600",
-        "alt": "Classroom session"
-      },
-      "label": "Training"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/1062/800/600",
-        "alt": "Office desk setup"
-      },
-      "label": "dog"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/1074/800/600",
-        "alt": "Language class in progress"
-      },
-      "label": "JFT Class"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/1084/800/600",
-        "alt": "Trainees studying"
-      },
-      "label": "animal"
-    },
-    {
-      "image": {
-        "src": "http://localhost:5000/uploads/media/1f36fda3-3b36-41db-b6da-fedf97bd7344.jpg",
-        "alt": "dog"
-      },
-      "label": "meow cash"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/109/800/600",
-        "alt": "Certificate ceremony"
-      },
-      "label": "Graduation"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/110/800/600",
+        "src": "/images/home/office.jpg",
         "alt": "Interview preparation"
       },
-      "label": "jungle"
-    },
-    {
-      "image": {
-        "src": "https://picsum.photos/id/1074/800/600",
-        "alt": "Staff meeting"
-      },
-      "label": "Team Meeting"
+      "label": "Counselling Room"
     }
   ]
 }
