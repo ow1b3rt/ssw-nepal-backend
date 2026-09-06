@@ -7,7 +7,7 @@ import { users } from "#/db/schema/users.js";
 const router = Router();
 
 router.route("/").all(authenticateUser, authorizePermissions("admin"))
-  .get((req, res) => commonGetController(req, res, users))
+  .get((req, res) => commonGetController(req, res, users, [users.name, users.email], undefined, ["role"]))
   .post(createUser);
 
 router.route("/:id").all(authenticateUser, authorizePermissions("admin"))
