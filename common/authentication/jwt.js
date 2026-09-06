@@ -11,7 +11,7 @@ export function createAccessToken(user) {
       tokenType: "access",
     },
     env.JWT_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "30d" },
   );
 }
 
@@ -22,7 +22,7 @@ export function createRefreshToken(user) {
       tokenType: "refresh",
     },
     env.JWT_REFRESH_SECRET,
-    { expiresIn: "7d" },
+    { expiresIn: "30d" },
   );
 }
 

@@ -12,6 +12,8 @@ export const contacts = t.pgTable(
 
     email: t.varchar("email", { length: 255 }).notNull(),
 
+    subject: t.varchar("subject", { length: 1000 }),
+
     phone: t.varchar("phone", { length: 10 }),
 
     message: t.text("message").notNull(),
