@@ -1,18 +1,16 @@
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
-import HttpError from '../../common/errors/HttpError.js';
-import { StatusCodes } from 'http-status-codes';
-
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { v4 as uuidv4 } from "uuid";
+import HttpError from "../../common/errors/HttpError.js";
+import { StatusCodes } from "http-status-codes";
 
 const uploadFolders = {
-    profilePics: 'profile_pics',
-    documents: "documents",
-    thumbnails: "thumbnails",
-    media: "media"
+  profilePics: "profile_pics",
+  documents: "documents",
+  thumbnails: "thumbnails",
+  media: "media",
 };
-
 
 /*
 |--------------------------------------------------------------------------
@@ -24,27 +22,16 @@ const uploadFolders = {
 */
 
 const ensureUploadPath = (folder) => {
+  const uploadPath = path.join(process.cwd(), "public", "uploads", folder);
 
-    const uploadPath = path.join(
-        process.cwd(),
-        'public',
-        'uploads',
-        folder
-    );
+  if (!fs.existsSync(uploadPath)) {
+    fs.mkdirSync(uploadPath, {
+      recursive: true,
+    });
+  }
 
-    if (!fs.existsSync(uploadPath)) {
-
-        fs.mkdirSync(
-            uploadPath,
-            {
-                recursive: true,
-            }
-        );
-    }
-
-    return uploadPath;
+  return uploadPath;
 };
-
 
 /*
 |--------------------------------------------------------------------------
@@ -56,25 +43,23 @@ const ensureUploadPath = (folder) => {
 */
 
 const allowedMimeTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'application/pdf',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
 ];
-
 
 const allowedExtensions = [
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.webp',
-    '.pdf',
-    '.xlsx',
-    '.docx',
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".pdf",
+  ".xlsx",
+  ".docx",
 ];
-
 
 /*
 |--------------------------------------------------------------------------
@@ -83,8 +68,7 @@ const allowedExtensions = [
 */
 
 const storage = multer.diskStorage({
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Destination Resolver
     |--------------------------------------------------------------------------
@@ -93,18 +77,10 @@ const storage = multer.diskStorage({
     |
     */
 
-    destination: (
-        req,
-        file,
-        cb
-    ) => {
+  destination: (req, file, cb) => {
+    const folder = uploadFolders[file.fieldname];
 
-        const folder =
-            uploadFolders[
-                file.fieldname
-            ];
-
-        /*
+    /*
         |--------------------------------------------------------------------------
         | Reject Unknown Upload Fields
         |--------------------------------------------------------------------------
@@ -114,24 +90,19 @@ const storage = multer.diskStorage({
         |
         */
 
-        if (!folder) {
+    if (!folder) {
+      return cb(
+        new HttpError(
+          `Invalid upload field: ${file.fieldname}`,
+          StatusCodes.BAD_REQUEST,
+        ),
+      );
+    }
 
-            return cb(
-                new HttpError(
-                    `Invalid upload field: ${file.fieldname}`,
-                    StatusCodes.BAD_REQUEST
-                )
-            );
-        }
+    cb(null, ensureUploadPath(folder));
+  },
 
-        cb(
-            null,
-            ensureUploadPath(folder)
-        );
-    },
-
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | File Naming Strategy
     |--------------------------------------------------------------------------
@@ -143,27 +114,14 @@ const storage = multer.diskStorage({
     |
     */
 
-    filename: (
-        req,
-        file,
-        cb
-    ) => {
+  filename: (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
 
-        const extension =
-            path
-                .extname(file.originalname)
-                .toLowerCase();
+    const uniqueName = `${uuidv4()}${extension}`;
 
-        const uniqueName =
-            `${uuidv4()}${extension}`;
-
-        cb(
-            null,
-            uniqueName
-        );
-    },
+    cb(null, uniqueName);
+  },
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -174,51 +132,21 @@ const storage = multer.diskStorage({
 |
 */
 
-const fileFilter = (
-    req,
-    file,
-    cb
-) => {
+const fileFilter = (req, file, cb) => {
+  const extension = path.extname(file.originalname).toLowerCase();
 
-  console.log(file)
-  console.log(cb)
-    
-    
+  const isMimeAllowed = allowedMimeTypes.includes(file.mimetype);
 
-    const extension =
-        path
-            .extname(file.originalname)
-            .toLowerCase();
+  const isExtensionAllowed = allowedExtensions.includes(extension);
 
-    const isMimeAllowed =
-        allowedMimeTypes.includes(
-            file.mimetype
-        );
-
-    const isExtensionAllowed =
-        allowedExtensions.includes(
-            extension
-        );
-
-    if (
-        !isMimeAllowed ||
-        !isExtensionAllowed
-    ) {
-
-        return cb(
-            new HttpError(
-                'Unsupported file format',
-                StatusCodes.BAD_REQUEST
-            )
-        );
-    }
-
-    cb(
-        null,
-        true
+  if (!isMimeAllowed || !isExtensionAllowed) {
+    return cb(
+      new HttpError("Unsupported file format", StatusCodes.BAD_REQUEST),
     );
-};
+  }
 
+  cb(null, true);
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -233,25 +161,21 @@ const fileFilter = (
 */
 
 const upload = multer({
+  storage,
 
-    storage,
+  fileFilter,
 
-    fileFilter,
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Upload Limits
     |--------------------------------------------------------------------------
     */
 
-    limits: {
+  limits: {
+    // 20 MB per file
 
-        // 20 MB per file
-
-        fileSize:
-            20 * 1024 * 1024,
-    },
+    fileSize: 20 * 1024 * 1024,
+  },
 });
-
 
 export default upload;

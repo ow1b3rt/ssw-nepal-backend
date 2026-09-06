@@ -63,7 +63,6 @@ export async function commonDeleteController(req, res, table) {
 }
 
 export async function commonGetSingleController(req, res, table) {
-  console.log("table", table);
   const data = await commonGetSingleService(table, req.params.id);
   res.status(StatusCodes.OK).json({
     success: true,

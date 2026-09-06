@@ -11,7 +11,6 @@ import { commonUpdateService } from "../../common/feature/common.services.js";
 
 export async function createNoticeController(req, res) {
   const { data } = createNoticeSchema.safeParse(req.body);
-  console.log("notic pars", data);
 
   const result = await commonCreateService(notices, data);
 
