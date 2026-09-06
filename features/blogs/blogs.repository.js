@@ -170,6 +170,7 @@ export async function findBlogById(id) {
     .from(blogs)
     .innerJoin(authors, eq(blogs.authorId, authors.id))
     .innerJoin(users, eq(authors.userId, users.id))
+    .leftJoin(media, eq(media.id, blogs.thumbnail))
     .where(eq(blogs.id, id))
     .limit(1);
 
@@ -182,6 +183,7 @@ export async function findBlogBySlug(slug) {
     .from(blogs)
     .innerJoin(authors, eq(blogs.authorId, authors.id))
     .innerJoin(users, eq(authors.userId, users.id))
+    .leftJoin(media, eq(media.id, blogs.thumbnail))
     .where(eq(blogs.slug, slug))
     .limit(1);
 

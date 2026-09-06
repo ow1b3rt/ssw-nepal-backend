@@ -32,7 +32,18 @@ router.route("/")
 
 
 router.route("/:id")
-  .get((req, res) => commonGetSingleController(req, res, authors))
+  .get((req, res) => commonGetSingleController(req, res, 
+    join(authors, users, {
+          on: eq(authors.userId, users.id),
+          name: 'authors',
+          fields: {
+            ...getTableColumns(authors),
+            name: users.name,
+            email: users.email,
+            avatar: users.avatar,
+          },
+    })
+  ))
   .patch(authenticateUser, authorizePermissions('admin'), updateAuthorController)
   .delete(authenticateUser, authorizePermissions('admin'), (req, res) => commonDeleteController(req, res, authors));
 

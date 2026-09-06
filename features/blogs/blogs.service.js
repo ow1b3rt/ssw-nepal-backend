@@ -196,13 +196,13 @@ export async function updateBlogService(user, id, data) {
     throw new HttpError("Blog not found", StatusCodes.NOT_FOUND);
   }
 
-  var author;
+  var author = user;
 
   if (user.role === "author") {
     author = await requireAuthorProfile(user.id);
   }
 
-  if (!canUpdateBlog(user, existingBlog, author.id)) {
+  if (!author || !canUpdateBlog(user, existingBlog, author.id)) {
     throw new HttpError(
       "You are not allowed to update this blog",
       StatusCodes.FORBIDDEN,
