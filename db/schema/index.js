@@ -7,3 +7,4 @@ export * from "./events.js";
 export * from "./gallery.js";
 export * from "./albums.js";
 export * from "./notices.js";
+export * from "./appointment.js";

@@ -9,6 +9,7 @@ import blogRoutes from "./blogs/blogs.routes.js";
 import authorRoutes from "./authors/authors.routes.js";
 import eventRoutes from "./events/events.routes.js";
 import layoutRoutes from "./layouts/layouts.routes.js";
+import appointmentRoutes from "./appointment/appointment.routes.js";
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/media", mediaRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/authors", authorRoutes);
 router.use("/layouts", layoutRoutes);
+router.use("/appointments", appointmentRoutes);
 
 export default router;
