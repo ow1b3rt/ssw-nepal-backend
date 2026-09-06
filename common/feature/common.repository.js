@@ -13,8 +13,6 @@ export async function commonFindById(source, id) {
   const baseTable = source && source.dataQuery ? source.baseTable : source;
   const { dataQuery } = source && source.dataQuery ? source : fromTable(source);
   let [result] = await dataQuery.where(eq(baseTable.id, id));
-  console.log("query", source, id);
-  console.log("resultehfehfh", result);
 
   if (result.password) {
     let { password, ...rest } = result;

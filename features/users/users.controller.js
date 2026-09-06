@@ -1,6 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 
-import { createUserSchema, deleteUserSchema, updateUserSchema } from "./users.schema.js";
+import {
+  createUserSchema,
+  deleteUserSchema,
+  updateUserSchema,
+} from "./users.schema.js";
 import { parseBody } from "../../common/utils/parse.js";
 import {
   createUserService,
@@ -10,9 +14,7 @@ import {
 } from "./users.services.js";
 
 export async function createUser(req, res) {
-  console.log("createUserController called with body:", req.body);
   const data = parseBody(createUserSchema, req.body);
-  console.log("Parsed data:", data);
   const result = await createUserService(data);
 
   res.status(StatusCodes.OK).json({
@@ -23,9 +25,8 @@ export async function createUser(req, res) {
 }
 
 export async function updateUserController(req, res) {
-  
   const data = parseBody(updateUserSchema, req.body);
-  
+
   const result = await updateUserService(req.params.id, data);
 
   res.status(StatusCodes.OK).json({

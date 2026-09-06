@@ -13,7 +13,6 @@ import { comparator } from "../../common/utils/patcher.js";
 import { emptyObject } from "../../common/utils/objectutils.js";
 
 export async function createUserService(data) {
-  console.log("createUserService called with data:", data);
   const existingUser = await findUserByEmail(data.email);
 
   if (existingUser) {
@@ -37,7 +36,6 @@ export async function createUserService(data) {
 }
 
 export async function deleteUserService(data) {
-  console.log(data.id);
   const user = await findUserById(data.id);
 
   if (!user) {
@@ -50,7 +48,10 @@ export async function updateUserService(id, userData) {
   const existingUser = await findUserById(id);
 
   if (!existingUser) {
-    throw new HttpError(`User with id ${id} does not exist`, StatusCodes.NOT_FOUND);
+    throw new HttpError(
+      `User with id ${id} does not exist`,
+      StatusCodes.NOT_FOUND,
+    );
   }
 
   if (existingUser.role === "admin") {
@@ -61,11 +62,10 @@ export async function updateUserService(id, userData) {
     throw new HttpError("Cannot make admin user", StatusCodes.FORBIDDEN);
   }
 
-  const changes = comparator(existingUser, userData)
+  const changes = comparator(existingUser, userData);
 
-  
-  if(changes.password) changes.password = await bcrypt.hash(changes.password, 12)
-
+  if (changes.password)
+    changes.password = await bcrypt.hash(changes.password, 12);
 
   const filteredUser = {
     id: existingUser.id,
@@ -73,9 +73,11 @@ export async function updateUserService(id, userData) {
     email: existingUser.email,
     role: existingUser.role,
     createdAt: existingUser.createdAt,
-  }
+  };
 
-  const updatedUser = emptyObject(changes) ? filteredUser : await updateUser(id, changes);
+  const updatedUser = emptyObject(changes)
+    ? filteredUser
+    : await updateUser(id, changes);
   return updatedUser;
 }
 

@@ -120,7 +120,6 @@ export async function getBlogsService(user, query) {
 
     order: query.order,
   };
-  console.log("options", options);
 
   if (!user) {
     const result = await findPublishedBlogs(options);

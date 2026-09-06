@@ -34,7 +34,6 @@ export async function getBlogs(req, res) {
   const query = parseBody(getBlogsQuerySchema, req.query);
 
   const result = await getBlogsService(req.user, query);
-  console.log("result", result);
 
   res.status(StatusCodes.OK).json({
     success: true,
