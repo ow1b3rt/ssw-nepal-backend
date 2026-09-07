@@ -11,7 +11,7 @@ export const events = t.pgTable("events", {
 
   content: t.uuid("content").references(() => media.id),
   title: t.varchar("title", { length: 255 }).notNull(),
-  slug: t.varchar("slug", { length: 255 }).notNull(),
+  slug: t.varchar("slug", { length: 255 }).notNull().unique(),
   description: t.text("description"),
   time: timestamp("time", {
     withTimezone: true,

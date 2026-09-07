@@ -15,6 +15,7 @@ import {
 import {
   commonCreateController,
   commonGetController,
+  commonGetSingleBySlugController,
   commonGetSingleController,
 } from "../../common/feature/common.controller.js";
 import { events } from "../../db/schema/events.js";
@@ -53,6 +54,23 @@ router.route("/");
 
 router.route("/:id").get((req, res) =>
   commonGetSingleController(
+    req,
+    res,
+    join(events, media, {
+      on: eq(events.content, media.id),
+      name: "events",
+      fields: {
+        ...getTableColumns(events),
+        mediaUrl: media.url,
+        mediaType: media.type,
+      },
+      type: "left",
+    }),
+  ),
+);
+
+router.route("/slug/:slug").get((req, res) =>
+  commonGetSingleBySlugController(
     req,
     res,
     join(events, media, {

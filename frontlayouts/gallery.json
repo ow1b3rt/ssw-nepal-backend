@@ -2,20 +2,6 @@
   "items": [
     {
       "image": {
-        "src": "/images/home/reception.jpg",
-        "alt": "Office reception"
-      },
-      "label": "Reception"
-    },
-    {
-      "image": {
-        "src": "/images/home/gathering.jpg",
-        "alt": "Group gathering"
-      },
-      "label": "Gathering"
-    },
-    {
-      "image": {
         "src": "/images/success.png",
         "alt": "Team gift ceremony"
       },
@@ -41,6 +27,20 @@
         "alt": "Classroom session"
       },
       "label": "Crew"
+    },
+    {
+      "image": {
+        "src": "/images/home/gathering.jpg",
+        "alt": "Group gathering"
+      },
+      "label": "Gathering"
+    },
+    {
+      "image": {
+        "src": "/images/home/reception.jpg",
+        "alt": "Office reception"
+      },
+      "label": "Reception"
     },
     {
       "image": {

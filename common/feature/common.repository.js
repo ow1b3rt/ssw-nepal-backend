@@ -1,6 +1,8 @@
 import { db } from "../../config/db.js";
-import { eq } from "drizzle-orm";
+import { DrizzleQueryError, eq } from "drizzle-orm";
 import { fromTable, paginateAndSearch } from "../utils/queryhelper.js";
+import HttpError from "../errors/HttpError.js";
+import { StatusCodes } from "http-status-codes";
 
 export async function commonCreate(table, data) {
   const [result] = await db.insert(table).values(data).returning();
@@ -13,6 +15,18 @@ export async function commonFindById(source, id) {
   const baseTable = source && source.dataQuery ? source.baseTable : source;
   const { dataQuery } = source && source.dataQuery ? source : fromTable(source);
   let [result] = await dataQuery.where(eq(baseTable.id, id));
+
+  if (result.password) {
+    let { password, ...rest } = result;
+    result = rest;
+  }
+  return result;
+}
+
+export async function commonFindBySlug(source, slug) {
+  const baseTable = source && source.dataQuery ? source.baseTable : source;
+  const { dataQuery } = source && source.dataQuery ? source : fromTable(source);
+  let [result] = await dataQuery.where(eq(baseTable.slug, slug));
 
   if (result.password) {
     let { password, ...rest } = result;
