@@ -4,6 +4,7 @@ import {
   commonUpdateService,
   commonDeleteService,
   commonGetSingleService,
+  commonGetSingleServiceBySlug,
 } from "./common.services.js";
 import { StatusCodes } from "http-status-codes";
 import { getTableName } from "drizzle-orm";
@@ -64,6 +65,15 @@ export async function commonDeleteController(req, res, table) {
 
 export async function commonGetSingleController(req, res, table) {
   const data = await commonGetSingleService(table, req.params.id);
+  res.status(StatusCodes.OK).json({
+    success: true,
+    resource: getTableName(table),
+    item: data,
+  });
+}
+
+export async function commonGetSingleBySlugController(req, res, table) {
+  const data = await commonGetSingleServiceBySlug(table, req.params.slug);
   res.status(StatusCodes.OK).json({
     success: true,
     resource: getTableName(table),
