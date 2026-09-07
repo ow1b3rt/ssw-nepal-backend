@@ -8,7 +8,7 @@ import {
 } from "../../common/feature/common.controller.js";
 import { authenticateUser, authorizePermissions } from "#/common/authentication/auth.js";
 import { authors } from "../../db/schema/authors.js";
-import { createAuthorController, updateAuthorController } from "./authors.controller.js";
+import { createAuthorController, updateAuthorController, deleteAuthorController } from "./authors.controller.js";
 import { join } from "#/common/utils/queryhelper.js";
 import { eq } from "drizzle-orm";
 import { users } from "#/db/schema/users.js";
@@ -45,6 +45,6 @@ router.route("/:id")
     })
   ))
   .patch(authenticateUser, authorizePermissions('admin'), updateAuthorController)
-  .delete(authenticateUser, authorizePermissions('admin'), (req, res) => commonDeleteController(req, res, authors));
+  .delete(authenticateUser, authorizePermissions('admin'), deleteAuthorController);
 
 export default router;

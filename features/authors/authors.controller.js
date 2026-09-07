@@ -3,8 +3,8 @@ import { createUserService } from "../users/users.services.js";
 import { insertAuthorSchema, updateAuthorSchema } from "./authors.schema.js";
 import HttpError from "../../common/errors/HttpError.js";
 import { StatusCodes } from "http-status-codes";
-import { commonCreateService } from "../../common/feature/common.services.js";
-import { authors } from "../../db/schema/index.js";
+import { commonCreateService, commonDeleteService, commonGetSingleService } from "../../common/feature/common.services.js";
+import { authors, users } from "../../db/schema/index.js";
 import { updateAuthorService } from "./authors.services.js";
 
 
@@ -45,5 +45,23 @@ export async function updateAuthorController(req, res) {
   res.status(StatusCodes.OK).json({
     success: true,
     ...result
+  });
+}
+
+export async function deleteAuthorController(req, res) {
+  const { id } = req.params;
+
+  const author = await commonGetSingleService(authors, id);
+  const user = await commonGetSingleService(users, author.userId);
+
+  if (!user || user.role !== "author") {
+    throw new HttpError("User not found or not an author", StatusCodes.NOT_FOUND);
+  }
+
+  await commonDeleteService(users, user.id);
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: `Author with id ${id} and associated user deleted successfully`
   });
 }
