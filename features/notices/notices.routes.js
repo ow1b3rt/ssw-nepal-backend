@@ -21,6 +21,8 @@ import {
   authenticateUser,
   authorizePermissions,
 } from "#/common/authentication/auth.js";
+import { commonGetSingleServiceBySlug } from "../../common/feature/common.services.js";
+import { commonGetSingleBySlugController } from "../../common/feature/common.controller.js";
 
 const router = Router();
 
@@ -51,6 +53,23 @@ router
 
 router.route("/:id").get((req, res) =>
   commonGetSingleController(
+    req,
+    res,
+    join(notices, media, {
+      on: eq(notices.content, media.id),
+      name: "notices",
+      fields: {
+        ...getTableColumns(notices),
+        mediaUrl: media.url,
+        mediaType: media.type,
+      },
+      type: "left",
+    }),
+  ),
+);
+
+router.route("/slug/:slug").get((req, res) =>
+  commonGetSingleBySlugController(
     req,
     res,
     join(notices, media, {

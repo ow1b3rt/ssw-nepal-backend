@@ -1,9 +1,9 @@
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
 import {
-  CONSTRAINT_MESSAGES,
   parseForeignKeyDetail,
   parseUniqueViolationDetail,
+  humanizeField,
 } from "./helper.js";
 
 const errorHandler = (err, req, res, next) => {
@@ -15,13 +15,12 @@ const errorHandler = (err, req, res, next) => {
     switch (pgErr.code) {
       case "23505": {
         // unique_violation
-        let message = CONSTRAINT_MESSAGES[pgErr.constraint];
-        if (!message) {
-          const parsed = parseUniqueViolationDetail(pgErr.detail);
-          message = parsed
-            ? `${humanizeField(parsed.column)} "${parsed.value}" is already taken`
-            : "This value already exists";
-        }
+
+        const parsed = parseUniqueViolationDetail(pgErr.detail);
+        const message = parsed
+          ? `${humanizeField(parsed.column)} "${parsed.value}" is already taken`
+          : "This value already exists";
+
         return res.status(409).json({ success: false, message });
       }
 
