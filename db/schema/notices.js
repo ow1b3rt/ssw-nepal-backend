@@ -9,6 +9,6 @@ export const notices = t.pgTable("notices", {
 
   content: t.uuid("content").references(() => media.id),
   title: t.varchar("title", { length: 255 }).notNull(),
-  slug: t.varchar("slug", { length: 255 }).notNull(),
+  slug: t.varchar("slug", { length: 255 }).notNull().unique(),
   description: t.text("description"),
 });

@@ -1,8 +1,3 @@
-export const CONSTRAINT_MESSAGES = {
-  events_slug_unique: "An event with this URL slug already exists",
-  users_email_unique: "This email is already registered",
-};
-
 export function humanizeField(column) {
   return column
     .replace(/_id$/, "")
