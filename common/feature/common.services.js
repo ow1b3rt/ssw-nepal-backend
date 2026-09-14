@@ -9,6 +9,7 @@ import {
   commonFindBySlug,
 } from "./common.repository.js";
 import { comparator } from "../utils/patcher.js";
+import { emptyObject } from "../utils/objectutils.js";
 
 export async function commonGetService(table, query) {
   const data = await commonFindAll(table, query);
@@ -28,8 +29,11 @@ export async function commonUpdateService(table, id, data) {
       StatusCodes.NOT_FOUND,
     );
   }
-
   const changes = comparator(existing, data);
+
+  if (emptyObject(changes)) {
+    return existing;
+  }
 
   const result = await commonUpdate(table, id, changes);
   return result;
