@@ -11,6 +11,8 @@ import eventRoutes from "./events/events.routes.js";
 import layoutRoutes from "./layouts/layouts.routes.js";
 import appointmentRoutes from "./appointment/appointment.routes.js";
 import successRoutes from "./successProfiles/succes.routes.js";
+import testimonialsRoutes from "./testimonials/testimonials.routes.js";
+
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -25,5 +27,6 @@ router.use("/authors", authorRoutes);
 router.use("/layouts", layoutRoutes);
 router.use("/appointments", appointmentRoutes);
 router.use("/success", successRoutes);
+router.use("/testimonials", testimonialsRoutes);
 
 export default router;
