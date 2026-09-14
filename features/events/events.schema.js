@@ -7,4 +7,6 @@ export const insertEventSchema = createInsertSchema(events, {
   time: z.coerce.date(),
 });
 
-export const updateEventSchema = createUpdateSchema(events);
+export const updateEventSchema = createUpdateSchema(events, {
+  time: z.coerce.date(),
+});

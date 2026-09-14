@@ -41,6 +41,7 @@ export async function getSingleEventController(req, res) {
 }
 
 export async function updateEventController(req, res) {
+  console.log();
   const { data } = updateEventSchema.safeParse(req.body);
   const result = await commonUpdateService(events, req.params.id, data);
 
