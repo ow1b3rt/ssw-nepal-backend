@@ -21,7 +21,13 @@ router
     commonCreateController(req, res, appointments, createAppointmentSchema),
   )
   .get(authenticateUser, authorizePermissions("admin"), (req, res) =>
-    commonGetController(req, res, appointments),
+    commonGetController(
+      req,
+      res,
+      appointments,
+
+      [appointments.firstName, appointments.lastName, appointments.email, appointments.phone],
+    ),
   );
 
 router
