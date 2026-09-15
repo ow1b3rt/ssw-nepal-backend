@@ -17,6 +17,6 @@ export const createAppointmentSchema = createInsertSchema(appointments, {
   phone: phoneSchema,
 });
 
-export const updateAppointmentSchema = createUpdateSchema(appointments, {
-  phone: phoneSchema,
+export const updateAppointmentSchema = createUpdateSchema(appointments).pick({
+  status: true,
 });
