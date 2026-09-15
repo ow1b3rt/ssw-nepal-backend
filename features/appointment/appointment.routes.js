@@ -5,9 +5,13 @@ import {
   commonDeleteController,
   commonGetController,
   commonGetSingleController,
+  commonUpdateController,
 } from "../../common/feature/common.controller.js";
 import { appointments } from "../../db/schema/appointment.js";
-import { createAppointmentSchema } from "./appointment.schema.js";
+import {
+  createAppointmentSchema,
+  updateAppointmentSchema,
+} from "./appointment.schema.js";
 import {
   authenticateUser,
   authorizePermissions,
@@ -34,6 +38,9 @@ router
   .route("/:id")
   .all(authenticateUser, authorizePermissions("admin"))
   .get((req, res) => commonGetSingleController(req, res, appointments))
+  .patch((req, res) =>
+    commonUpdateController(req, res, appointments, updateAppointmentSchema),
+  )
   .delete((req, res) => commonDeleteController(req, res, appointments));
 
 export default router;

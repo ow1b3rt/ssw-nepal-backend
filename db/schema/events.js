@@ -19,5 +19,8 @@ export const events = t.pgTable("events", {
     .notNull()
     .defaultNow(),
 
-  location: t.text("location").notNull().default("Bagbazar,Kathmandu"),
+  location: t
+    .text("location")
+    .notNull()
+    .default("Narayan Gopal Chowk,Kathmandu"),
 });
