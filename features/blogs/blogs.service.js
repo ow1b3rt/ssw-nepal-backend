@@ -102,7 +102,7 @@ export async function createBlogService(user, data) {
 
     authorId: author.id,
 
-    publishedAt: data.status === "published" ? new Date() : null,
+    publishedAt: data.status === "published" ? data.publishedAt ?? new Date() : null,
   });
 
   return blog;
@@ -217,7 +217,7 @@ export async function updateBlogService(user, id, data) {
   }
 
   if (data.status === "published" && existingBlog.status !== "published") {
-    updateData.publishedAt = new Date();
+    updateData.publishedAt = data.publishedAt ?? new Date();
   }
 
   if (data.status === "draft" && existingBlog.status === "published") {
