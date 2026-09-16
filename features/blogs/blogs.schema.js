@@ -20,6 +20,12 @@ export const createBlogSchema = z.object({
     .enum(["draft", "published"])
     .default("draft"),
 
+  publishedAt: z
+    .iso.datetime()
+    .transform((value) => new Date(value))
+    .nullable()
+    .optional(),
+
   metaTitle: z
     .string()
     .trim()

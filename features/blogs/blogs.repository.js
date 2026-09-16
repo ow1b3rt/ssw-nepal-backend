@@ -2,6 +2,10 @@ import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
 
 import { db } from "../../config/db.js";
 import { authors, blogs, media, users } from "../../db/schema/index.js";
+import { alias } from "drizzle-orm/pg-core";
+
+const thumbnailMedia = alias(media, "thumbnail_media");
+const avatarMedia = alias(media, "avatar_media");
 
 const blogListSelection = {
   id: blogs.id,
@@ -19,6 +23,7 @@ const blogListSelection = {
     id: authors.id,
     userId: authors.userId,
     name: users.name,
+    avatar: media.url,
   },
   media: {
     id: media.id,
@@ -54,11 +59,14 @@ const blogDetailSelection = {
   authorUserId: authors.userId,
   authorName: users.name,
 
-  mediaId: media.id,
-  mediaUrl: media.url,
-  mediaTitle: media.title,
-  mediaAlt: media.alt,
-  mediaCaption: media.caption,
+  mediaId: thumbnailMedia.id,
+  mediaUrl: thumbnailMedia.url,
+  mediaTitle: thumbnailMedia.title,
+  mediaAlt: thumbnailMedia.alt,
+  mediaCaption: thumbnailMedia.caption,
+
+  authorAvatar: avatarMedia.url,
+  authorAvatarAlt: avatarMedia.alt,
 };
 
 export async function findAuthorByUserId(userId) {
@@ -183,7 +191,8 @@ export async function findBlogBySlug(slug) {
     .from(blogs)
     .innerJoin(authors, eq(blogs.authorId, authors.id))
     .innerJoin(users, eq(authors.userId, users.id))
-    .leftJoin(media, eq(media.id, blogs.thumbnail))
+    .leftJoin(thumbnailMedia, eq(thumbnailMedia.id, blogs.thumbnail))
+    .leftJoin(avatarMedia, eq(avatarMedia.id, users.avatar))
     .where(eq(blogs.slug, slug))
     .limit(1);
 
@@ -196,7 +205,8 @@ export async function findPublishedBlogBySlug(slug) {
     .from(blogs)
     .innerJoin(authors, eq(blogs.authorId, authors.id))
     .innerJoin(users, eq(authors.userId, users.id))
-    .leftJoin(media, eq(media.id, blogs.thumbnail))
+    .leftJoin(thumbnailMedia, eq(thumbnailMedia.id, blogs.thumbnail))
+    .leftJoin(avatarMedia, eq(avatarMedia.id, users.avatar))
     .where(and(eq(blogs.slug, slug), eq(blogs.status, "published")))
     .limit(1);
 
