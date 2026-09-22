@@ -26,6 +26,15 @@
       "title": "JFT-Basic",
       "description": "Focused preparation for the Japan Foundation Test for Basic Japanese, required for most SSW visa categories.\n\nDuration: 3 months — Rs. 13,000",
       "slug": "jft-basic"
+    },
+    {
+      "image": {
+        "src": "http://localhost:5001/uploads/media/9c0067b3-02b2-41f5-aaa6-eae7db4f14f2.jpg",
+        "alt": "japan"
+      },
+      "title": "test",
+      "description": "test",
+      "slug": "test"
     }
   ]
 }
